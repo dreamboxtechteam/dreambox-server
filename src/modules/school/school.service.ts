@@ -7,18 +7,13 @@ import { School } from './schemas/school.schema';
 export class SchoolService {
   constructor(@InjectModel(School.name) private schoolModel: Model<School>) {}
 
-  // Get the single school record (Dashboard view)
   async getSettings() {
     let school = await this.schoolModel.findOne();
-    if (!school) {
-      // Create a default one if none exists
-      school = await this.schoolModel.create({ schoolName: 'My Virtual School' });
-    }
+    if (!school) school = await this.schoolModel.create({ schoolName: 'Dreambox School' });
     return school;
   }
 
-  // Update school info (Admin action)
-  async updateSettings(updateData: any) {
-    return this.schoolModel.findOneAndUpdate({}, updateData, { new: true });
+  async updateSettings(data: any) {
+    return this.schoolModel.findOneAndUpdate({}, data, { new: true });
   }
 }

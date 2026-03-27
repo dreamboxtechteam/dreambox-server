@@ -1,14 +1,13 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { Controller, Get, Patch, Body } from '@nestjs/common';
 import { SchoolService } from './school.service';
-import { SchoolController } from './school.controller';
-import { School, SchoolSchema } from './schemas/school.schema';
 
-@Module({
-  imports: [
-    MongooseModule.forFeature([{ name: School.name, schema: SchoolSchema }])
-  ],
-  controllers: [SchoolController],
-  providers: [SchoolService],
-})
-export class SchoolModule {}
+@Controller('school')
+export class SchoolController {
+  constructor(private readonly schoolService: SchoolService) {}
+
+  @Get()
+  async getInfo() { return this.schoolService.getSettings(); }
+
+  @Patch()
+  async update(@Body() data: any) { return this.schoolService.updateSettings(data); }
+}
