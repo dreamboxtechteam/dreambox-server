@@ -4,10 +4,16 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  app.enableCors(); // Allows your frontend to talk to this server
   
-  await app.listen(process.env.PORT || 3000);
-  console.log(`🚀 Server running on: http://localhost:${process.env.PORT || 3000}`);
+  // Keep your existing validation and CORS
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.enableCors(); 
+
+  const port = process.env.PORT || 3000;
+
+  // CHANGE: Added '0.0.0.0' to allow Render to "bind" to the port
+  await app.listen(port, '0.0.0.0');
+  
+  console.log(`🚀 Server is live on port ${port}`);
 }
 bootstrap();
