@@ -6,7 +6,17 @@ export class User extends Document {
   @Prop({ required: true }) fullName: string;
   @Prop({ unique: true, required: true }) email: string;
   @Prop({ required: true, select: false }) password: string;
-  @Prop({ enum: ['admin', 'tutor', 'parent'], default: 'parent' }) role: string;
+  @Prop({ enum: ['admin', 'school_admin', 'tutor', 'student'], default: 'student' }) role: string;
   @Prop({ default: true }) mustChangePassword: boolean;
+
+  // --- Payment & Access Control ---
+  @Prop({ default: false }) isRegistrationPaid: boolean; // The 20k Naira fee
+  @Prop({ enum: ['active', 'inactive', 'expired'], default: 'inactive' }) subscriptionStatus: string;
+  @Prop() subscriptionExpiryDate: Date;
+
+  // --- School & Academic Data ---
+  @Prop() schoolName: string; 
+  @Prop({ type: [String] }) enrolledSubjects: string[]; // e.g. ["Coding", "Robotics"]
+  @Prop() gradeLevel: string;
 }
 export const UserSchema = SchemaFactory.createForClass(User);

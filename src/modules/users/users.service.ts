@@ -27,11 +27,35 @@ export class UsersService {
     });
   }
 
+  
+  // CREATE (Onboarding)
+  async create(dto: any) {
+    const hashedPassword = await bcrypt.hash(dto.password || 'DreamBox2026!', 10);
+    return this.userModel.create({ ...dto, password: hashedPassword });
+  }
+
   async findUserByEmail(email: string) {
     return this.userModel.findOne({ email }).select('+password').exec();
   }
 
+  
+
   async findAllUsers() { return this.userModel.find().exec(); }
   async updateUser(id: string, data: any) { return this.userModel.findByIdAndUpdate(id, data, { new: true }).exec(); }
+
+  // READ ALL (Admin view)
+  async findAll() { return this.userModel.find().exec(); }
+
+  // READ BY SCHOOL (For Richfield/School Reps)
+  async findBySchool(schoolName: string) {
+    return this.userModel.find({ schoolName, role: 'student' }).exec();
+  }
+
+  // UPDATE (For Payment Success & Subscriptions)
+  async update(id: string, updateData: any) {
+    return this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+  }
+
+  // DELETE
   async deleteUser(id: string) { return this.userModel.findByIdAndDelete(id).exec(); }
 }
