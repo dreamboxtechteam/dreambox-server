@@ -10,19 +10,13 @@ export class User extends Document {
   @Prop({ default: true }) mustChangePassword: boolean;
 
   // --- Payment & Access Control ---
-  @Prop({ default: false }) isRegistrationPaid: boolean; // The 20k Naira fee
-  
-  // RESTORED: Monthly access control
-  @Prop({ enum: ['active', 'inactive', 'expired'], default: 'inactive' }) 
-  subscriptionStatus: string;
-  
-  @Prop() 
-  subscriptionExpiryDate: Date;
+  @Prop({ default: false }) isRegistrationPaid: boolean; 
+  @Prop({ enum: ['active', 'inactive', 'expired'], default: 'inactive' }) subscriptionStatus: string;
+  @Prop() subscriptionExpiryDate: Date;
 
   // --- School & Academic Data ---
   @Prop() schoolName: string; 
   @Prop({ type: [String] }) enrolledSubjects: string[]; 
   @Prop() gradeLevel: string;
 }
-
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -6,26 +6,28 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  // Returns { user, access_token }
   @Post('onboard')
   async onboard(@Body() createUserDto: CreateUserDto) {
     return this.usersService.onboardUser(createUserDto);
   }
 
+  // Admin hits this to unlock the 20k registration
   @Patch(':id/approve-registration')
   async approveRegistration(@Param('id') id: string) {
     return this.usersService.approveUser(id);
+  }
+
+  // Frontend calls this with ID from JWT to check "isRegistrationPaid"
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.usersService.findById(id);
   }
 
   @Get('all')
   async findAll(@Query('school') school?: string) {
     if (school) return this.usersService.findBySchool(school);
     return this.usersService.findAllUsers();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    // Path of least resistance: uses update with empty body to fetch
-    return this.usersService.update(id, {}); 
   }
 
   @Patch(':id')
