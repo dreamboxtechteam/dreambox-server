@@ -1,27 +1,44 @@
-import { IsEmail, IsString, IsEnum, IsOptional } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsArray } from 'class-validator';
 
 export class CreateUserDto {
-  @IsString() 
+  @IsString()
+  @IsNotEmpty()
   fullName: string;
 
-  @IsEmail() 
-  email: string;
+  @IsEmail()
+  @IsNotEmpty()
+  parentEmail: string; // The primary email from your new form
 
-  // UPDATE THIS LINE:
-  @IsEnum(['admin', 'school_admin', 'tutor', 'student'], {
-    message: 'role must be admin, school_admin, tutor, or student',
-  })
-  role: string;
+  @IsString()
+  @IsOptional()
+  gender?: string;
 
-  @IsOptional() 
-  @IsString() 
+  @IsString()
+  @IsOptional()
+  age?: string;
+
+  @IsString()
+  @IsOptional()
+  currentClass?: string;
+
+  @IsString()
+  @IsOptional()
+  country?: string;
+
+  @IsString()
+  @IsOptional()
+  favouriteCharacter?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  enrolledSubjects?: string[];
+
+  @IsString()
+  @IsOptional()
   schoolName?: string;
 
-  @IsOptional() 
-  @IsString() 
-  gradeLevel?: string;
-
-  @IsOptional() 
-  @IsString() 
-  password?: string;
+  @IsString()
+  @IsOptional()
+  role?: string; // Default is 'student' in schema, but good to have here
 }

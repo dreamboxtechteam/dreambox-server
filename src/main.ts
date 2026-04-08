@@ -9,7 +9,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.enableCors(); 
 
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 3001;
 
   // CHANGE: Added '0.0.0.0' to allow Render to "bind" to the port
   await app.listen(port, '0.0.0.0');

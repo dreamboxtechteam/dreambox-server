@@ -2,9 +2,8 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt'; 
+import { JwtService } from '@nestjs/jwt';
 import { User } from './schemas/user.schema';
-import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -13,23 +12,23 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // Registration + Auto-Login Token
-  async onboardUser(dto: CreateUserDto & { password?: string, role?: string }) {
-    const exists = await this.userModel.findOne({ email: dto.email });
+  // 1. ONBOARD: Handles the new form fields + JWT generation
+  async onboardUser(dto: any) {
+    const email = dto.parentEmail?.toLowerCase() || dto.email?.toLowerCase();
+    
+    const exists = await this.userModel.findOne({ email });
     if (exists) throw new ConflictException('This email is already registered.');
 
-    const passwordToHash = dto.password || 'ChangeMe2026!';
-    const hashedPassword = await bcrypt.hash(passwordToHash, 10);
+    const hashedPassword = await bcrypt.hash('DreamBox2026!', 10);
 
     const newUser = await this.userModel.create({
       ...dto,
+      email, 
       password: hashedPassword,
-      mustChangePassword: dto.role !== 'admin',
       isRegistrationPaid: false,
       subscriptionStatus: 'inactive',
     });
 
-    // Generate JWT so frontend can extract the ID
     const payload = { email: newUser.email, sub: newUser._id, role: newUser.role };
     const token = this.jwtService.sign(payload);
 
@@ -39,10 +38,32 @@ export class UsersService {
     };
   }
 
+  // 2. READ ONE: Used for the Dashboard status check
   async findById(id: string) {
     return this.userModel.findById(id).exec();
   }
 
+  // 3. READ ALL: Admin view
+  async findAllUsers() { 
+    return this.userModel.find().exec(); 
+  }
+
+  // 4. RESTORED: Find by School
+  async findBySchool(schoolName: string) {
+    return this.userModel.find({ schoolName, role: 'student' }).exec();
+  }
+
+  // 5. UPDATE: General updates
+  async update(id: string, updateData: any) {
+    return this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+  }
+
+  // 6. RESTORED: Delete User
+  async deleteUser(id: string) { 
+    return this.userModel.findByIdAndDelete(id).exec(); 
+  }
+
+  // 7. APPROVE: The Moniepoint/OPay Unlock
   async approveUser(id: string) {
     return this.userModel.findByIdAndUpdate(
       id,
@@ -51,15 +72,8 @@ export class UsersService {
     ).exec();
   }
 
-  async findAllUsers() { return this.userModel.find().exec(); }
-  
-  async findBySchool(schoolName: string) {
-    return this.userModel.find({ schoolName, role: 'student' }).exec();
+  async findUserByEmail(email: string) {
+    // We use .select('+password') because the schema hides it by default
+    return this.userModel.findOne({ email: email.toLowerCase() }).select('+password').exec();
   }
-
-  async update(id: string, updateData: any) {
-    return this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
-  }
-
-  async deleteUser(id: string) { return this.userModel.findByIdAndDelete(id).exec(); }
 }
