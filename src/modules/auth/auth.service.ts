@@ -16,7 +16,19 @@ export class AuthService {
     const payload = { sub: user._id, email: user.email, role: user.role };
     return {
       access_token: await this.jwtService.signAsync(payload),
-      user: { fullName: user.fullName, role: user.role, mustChangePassword: user.mustChangePassword }
+      user: {
+      fullName: user.fullName,
+      parentEmail: user.parentEmail,
+      gender: user.gender,
+      age: user.age,
+      currentClass: user.currentClass,
+      country: user.country,
+      enrolledSubjects: user.enrolledSubjects,
+      role: user.role,
+      isRegistrationPaid: user.isRegistrationPaid,
+      subscriptionStatus: user.subscriptionStatus,
+      _id: user._id,
+    },
     };
   }
 }
