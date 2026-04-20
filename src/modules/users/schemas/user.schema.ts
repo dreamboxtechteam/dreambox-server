@@ -23,6 +23,14 @@ export class User extends Document {
   @Prop() subscriptionExpiryDate: Date;
   @Prop({ default: true }) mustChangePassword: boolean;
   @Prop() schoolName: string;
+
+  // --- Tutor-specific ---
+ @Prop() location: string;
+@Prop() experience: string;
+@Prop({ default: 'IGCSE English' }) specialization: string;
+
+
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

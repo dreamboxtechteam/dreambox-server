@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Controller('users')
 export class UsersController {
@@ -15,6 +16,8 @@ export class UsersController {
     return this.usersService.approveUser(id);
   }
 
+
+  @UseGuards( RolesGuard)
   @Get('all')
   async findAll(@Query('school') school?: string) {
     if (school) return this.usersService.findBySchool(school);
@@ -34,5 +37,20 @@ export class UsersController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.usersService.deleteUser(id);
+  }
+
+  @UseGuards(RolesGuard)
+  @Get('admin/stats')
+  async getAdminStats() {
+    const allUsers = await this.usersService.findAllUsers();
+    
+    return {
+      totalStudents: allUsers.filter(u => u.role === 'student').length,
+      totalTutors: allUsers.filter(u => u.role === 'tutor').length,
+      pendingPayments: allUsers.filter(u => u.role === 'student' && !u.isRegistrationPaid).length,
+      activeSubscriptions: allUsers.filter(u => u.subscriptionStatus === 'active').length,
+      // Quick math: 20k per paid registration
+      totalRevenue: allUsers.filter(u => u.isRegistrationPaid).length * 20000,
+    };
   }
 }
