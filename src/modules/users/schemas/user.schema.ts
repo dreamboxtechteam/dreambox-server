@@ -31,6 +31,9 @@ export class User extends Document {
 
 
 
+@Prop() schoolAddress: string;
+
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
