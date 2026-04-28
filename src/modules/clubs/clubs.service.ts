@@ -34,4 +34,11 @@ export class ClubsService {
   async getTutorAssignments(tutorId: string) {
     return this.clubModel.find({ tutorId }).exec();
   }
+
+  async getClubsByAdmin(adminId: string) {
+  return this.clubModel
+    .find({ schoolAdminId: adminId })
+    .populate('tutorId', 'fullName') // Only grab the fullName from the User model
+    .exec();
+}
 }
