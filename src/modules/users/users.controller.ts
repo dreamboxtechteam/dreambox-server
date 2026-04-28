@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { RolesGuard } from 'src/common/guards/roles.guard';
+import { RolesGuard } from '@/common/guards/roles.guard';
 
 @Controller('users')
 export class UsersController {
