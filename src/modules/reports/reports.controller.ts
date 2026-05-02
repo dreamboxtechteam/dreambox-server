@@ -1,29 +1,27 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
-import { ReportsService } from './reports.service';
+import { Controller, Post, Get, Body, UseGuards, Request } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @Controller('reports')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ReportsController {
-  constructor(private readonly reportsService: ReportsService) {}
+  constructor(private readonly reportsService: any) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Post('submit')
-  async submitReport(@Body() body: any, @Request() req: any) {
-    // req.user.userId is the ID extracted from the Tutor's JWT
-    const report = await this.reportsService.createReport(body, req.user.userId);
-    return {
-      success: true,
-      data: report,
-    };
+  @Post('create')
+  @Roles('tutor')
+  async createReport(@Request() req, @Body() body: { studentId: string, content: string }) {
+    // tutorId is pulled automatically from the token (req.user.sub)
+    return this.reportsService.create({
+      ...body,
+      tutorId: req.user.sub,
+      date: new Date(),
+    });
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('student/:studentId')
-  async getStudentReports(@Param('studentId') studentId: string) {
-    const reports = await this.reportsService.findByStudent(studentId);
-    return {
-      success: true,
-      data: reports,
-    };
+  @Get('my-reports')
+  @Roles('student')
+  async getStudentReports(@Request() req) {
+    return this.reportsService.findByStudent(req.user.sub);
   }
 }

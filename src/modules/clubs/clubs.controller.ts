@@ -10,6 +10,7 @@ export class ClubsController {
   // ADD THIS ROUTE HERE
   @UseGuards(JwtAuthGuard)
   @Post('initialize')
+  
   async initializeClub(@Body() body: any) {
     // We expect the frontend to send { adminDto, clubDetails }
     const club = await this.clubsService.initializeSchoolClub(

@@ -53,4 +53,6 @@ export class UsersController {
       totalRevenue: allUsers.filter(u => u.isRegistrationPaid).length * 20000,
     };
   }
+
+  
 }
