@@ -6,6 +6,7 @@ import { SchoolModule } from './modules/school/school.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ScheduleModule } from '@nestjs/schedule';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     UsersModule,
     SchoolModule,
     AuthModule,
+    AdminModule,
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com', // Or your provider

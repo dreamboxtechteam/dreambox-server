@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -28,6 +28,12 @@ export class User extends Document {
  @Prop() location: string;
 @Prop() experience: string;
 @Prop({ default: 'IGCSE English' }) specialization: string;
+
+@Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User' })
+assignedTutor: string; // Used for Students
+
+@Prop()
+school: string; // Used for Tutors/Students
 
 
 
